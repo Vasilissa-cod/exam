@@ -29,6 +29,16 @@ public class fatsecret {
         wait = new WebDriverWait(driver, Duration.ofSeconds(10));
     }
 
+    /*
+     * Тест 1: Проверка ошибки при пустых полях
+     * 
+     * Сайт может показать ошибку двумя способами:
+     * 1. Alert (всплывающее окно JavaScript) с текстом "Login failed."
+     * 2. Сообщение на странице (RequiredFieldValidator)
+     * 
+     * Selenium не может работать с элементами страницы, пока открыт alert,
+     * поэтому сначала проверяем alert, а потом ищем ошибку на странице.
+     */
     @Test
     public void emptyLoginTest() throws InterruptedException {
         //1. Открыть страницу https://foods.fatsecret.com/
@@ -86,6 +96,52 @@ public class fatsecret {
             System.out.println("Тест пройден: сообщение об ошибке получено!");
         } else {
             System.out.println("Тест не пройден: сообщение об ошибке не найдено");
+        }
+    }
+
+    @Test
+    public void loginTest() throws InterruptedException {
+        //Открыть страницу входа
+        driver.get("https://foods.fatsecret.com/Auth.aspx?pa=s&ReturnUrl=https%3a%2f%2ffoods.fatsecret.com%2fDefault.aspx%3fpa%3dm");
+        Thread.sleep(2000);
+
+        //Найти поле для имени пользователя/email
+        WebElement usernameField = wait.until(
+                ExpectedConditions.presenceOfElementLocated(
+                        By.id("ctl11_Logincontrol1_Name"))
+        );
+
+        //Найти поле для пароля
+        WebElement passwordField = driver.findElement(
+                By.id("ctl11_Logincontrol1_Password")
+        );
+
+        //Найти кнопку входа
+        WebElement loginButton = driver.findElement(
+                By.id("ctl11_Logincontrol1_Login")
+        );
+
+        //Ввести учетные данные
+        usernameField.clear();
+        usernameField.sendKeys("sbayg@comfythings.com");
+
+        passwordField.clear();
+        passwordField.sendKeys("javatest1234");
+
+        //Нажать кнопку входа
+        loginButton.click();
+
+        //Подождать и проверить успешный вход
+        Thread.sleep(5000);
+
+        //Проверяем URL
+        String currentUrl = driver.getCurrentUrl();
+        System.out.println("Текущий URL: " + currentUrl);
+
+        if (currentUrl.contains("Default.aspx?pa=m")) {
+            System.out.println("Вход выполнен успешно!");
+        } else {
+            System.out.println("Что-то пошло не так. Ожидался URL с Default.aspx?pa=m");
         }
     }
 
