@@ -3,7 +3,6 @@ import com.codeborne.selenide.Configuration;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.openqa.selenium.By;
-import org.openqa.selenium.NoAlertPresentException;
 
 public class FatsecretSelenide {
 
@@ -20,7 +19,7 @@ public class FatsecretSelenide {
      * 1. Нажать Sign In
      * 2. Очистить поля
      * 3. Нажать Sign In
-     * 4. Проверить, что получено сообщение об ошибке
+     * 4. Проверить, что получено сообщение об ошибке (alert)
      */
     @Test
     public void test01EmptyLoginError() {
@@ -33,25 +32,9 @@ public class FatsecretSelenide {
 
         $(By.id("ctl11_Logincontrol1_Login")).click();
 
-        //Проверяем alert или сообщение на странице
-        boolean errorFound = false;
+        //Закрываем alert с сообщением об ошибке
+        confirm();
 
-        try {
-            String alertText = switchTo().alert().getText();
-            System.out.println("Получен alert: " + alertText);
-            switchTo().alert().accept();
-            errorFound = true;
-        } catch (NoAlertPresentException e) {
-            if ($(By.id("ctl11_Logincontrol1_RequiredFieldValidator1")).isDisplayed()) {
-                System.out.println("Получено сообщение об ошибке на странице");
-                errorFound = true;
-            }
-        }
-
-        if (errorFound) {
-            System.out.println("Тест пройден: сообщение об ошибке получено!");
-        } else {
-            System.out.println("Тест не пройден");
-        }
+        System.out.println("Тест пройден: сообщение об ошибке получено!");
     }
 }
